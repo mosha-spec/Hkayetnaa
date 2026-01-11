@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>حكايتنا</title>
+<style>
+body{
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg,#ffdee9,#b5fffc);
+  margin:0;
+  padding:20px;
+  color:#333;
+}
+.container{
+  max-width:500px;
+  margin:auto;
+  background:#fff;
+  border-radius:15px;
+  padding:20px;
+  box-shadow:0 10px 30px rgba(0,0,0,.1);
+  margin-bottom:20px;
+}
+h1,h2{
+  text-align:center;
+}
+input,button,textarea,select{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  font-size:16px;
+}
+button{
+  background:#ff4d6d;
+  color:#fff;
+  border:none;
+  cursor:pointer;
+}
+button:hover{opacity:.9;}
+.box{
+  background:#f7f7f7;
+  padding:15px;
+  border-radius:10px;
+  margin-top:15px;
+  white-space:pre-wrap;
+  text-align:center;
+}
+.cta{
+  margin-top:20px;
+  padding:15px;
+  background:#ffe6eb;
+  border-radius:10px;
+  text-align:center;
+}
+.price{
+  font-size:18px;
+  font-weight:bold;
+  margin-top:10px;
+}
+</style>
+</head>
+<body>
+
+<!-- صفحة البنت -->
+<div class="container" id="creator">
+  <h1>حكايتنا</h1>
+  <p>اعملي لينك بسيط يحكيله عنكم</p>
+  <input id="herName" placeholder="إسمك يا قمر">
+  <input id="hisName" placeholder="اسم حبيبك هنا">
+  <input id="date" type="date">
+  <input id="girlWords" placeholder="اكتبيلو حاجة من قلبك يست الحسن والجمال">
+  <button onclick="createLink()">اعملي اللينك</button>
+</div>
+
+<!-- صفحة الولد -->
+<div class="container" id="viewer" style="display:none">
+  <h2 id="title"></h2>
+  <div class="box" id="message"></div>
+  <div class="cta">
+    <p>لو حابب ترد الهدية وتعمل ذكرى أكبر باسمكم</p>
+    <div class="price">سعر الهدية: 300 جنيه</div>
+    
+    <label>اختار رقم فودافون كاش للدفع:</label>
+    <select id="cashNumber">
+      <option value="01025234025">01025234025</option>
+      <option value="01025235325">01025235325</option>
+    </select>
+    
+    <button onclick="sendGift()">رد الهدية</button>
+  </div>
+</div>
+
+<script>
+function createLink(){
+  let her = document.getElementById("herName").value.trim();
+  let his = document.getElementById("hisName").value.trim();
+  let date = document.getElementById("date").value;
+  let words = document.getElementById("girlWords").value.trim();
+
+  if(!her || !his || !date || !words){
+    alert("كملي كل البيانات");
+    return;
+  }
+
+  // ترتيب الرسالة: الكلمات الحلوة أولاً، التاريخ في الوسط، وبقية النص
+  let msg = `${words}\n\nمن يوم ${date}\n\nواحنا عارفين بعض\nحبيت اقولك :\nانت دايمًا في بالي\n وتمني تفضل ديما جمبي ومعايا وحياتي أحلى معاك`;
+
+  let url = location.origin + location.pathname +
+            `?her=${encodeURIComponent(her)}&his=${encodeURIComponent(his)}&msg=${encodeURIComponent(msg)}`;
+
+  navigator.clipboard.writeText(url).then(()=>{
+    alert("اللـينك اتنسخ ابعتيهوله");
+  });
+}
+
+let params = new URLSearchParams(window.location.search);
+if(params.has("her")){
+  document.getElementById("creator").style.display="none";
+  document.getElementById("viewer").style.display="block";
+
+  let her = params.get("her");
+  let his = params.get("his");
+  let msg = params.get("msg");
+
+  document.getElementById("title").innerText = `${his} ❤️ ${her}`;
+  document.getElementById("message").innerText = msg;
+}
+
+function sendGift(){
+  let cashNumber = document.getElementById("cashNumber").value;
+  // تحويل مباشرة على واتساب
+  let whatsappLink = `https://wa.me/20${cashNumber}?text=تم الدفع%20على%20${cashNumber}%20 رد الهدية`;
+  window.open(whatsappLink, "_blank");
+}
+</script>
+
+</body>
+</html>
